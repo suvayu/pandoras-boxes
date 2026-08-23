@@ -1,6 +1,11 @@
 IMAGE_PREFIX ?= localhost
 PROJECT_NAME ?= myname
 
+# $(1) = image base name
+define PODMAN_BUILD
+	podman build -t $(IMAGE_PREFIX)/$(1)-build:latest -f Containerfile.$(1) .
+endef
+
 # $(1) = container base name, $(2) = image base name
 define TOOLBOX_CREATE
 	podman container exists $(1)-build || toolbox create --image $(IMAGE_PREFIX)/$(2)-build $(1)-build
@@ -11,11 +16,11 @@ endef
 all: vulkan rocm rocm-nightly
 
 vulkan:
-	podman build -t $(IMAGE_PREFIX)/${@}-build:latest -f Containerfile.vulkan .
+	$(call PODMAN_BUILD,$@)
 	$(call TOOLBOX_CREATE,$@,$@)
 
 rocm: vulkan
-	podman build -t $(IMAGE_PREFIX)/${@}-build:latest -f Containerfile.rocm .
+	$(call PODMAN_BUILD,$@)
 	$(call TOOLBOX_CREATE,$@,$@)
 
 rocm-nightly:	vulkan
