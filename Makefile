@@ -25,7 +25,7 @@ rocm: vulkan
 
 rocm-nightly:	vulkan
 	$(call TOOLBOX_CREATE,$@,$<)
-	toolbox run --container ${@}-build ${HOME}/bin/rocm-nightly install amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel
+	toolbox run --container ${@}-build ${HOME}/bin/rocm-nightly -y install amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel
 
 update-rocm-nightly:
-	toolbox run --container ${@}-build ${HOME}/bin/rocm-nightly update amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel
+	toolbox run --container ${@}-build ${HOME}/bin/rocm-nightly -y update amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel
