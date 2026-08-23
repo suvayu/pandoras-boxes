@@ -6,13 +6,16 @@ PROJECT_NAME ?= myname
 all: vulkan rocm rocm-nightly
 
 vulkan:
-	podman build -t $(IMAGE_PREFIX)/${@}-build:latest -f Containerfile .
+	podman build -t $(IMAGE_PREFIX)/${@}-build:latest -f Containerfile.vulkan .
 	toolbox create --image $(IMAGE_PREFIX)/${@}-build ${@}-build
 
-rocm:
-	podman build -t $(IMAGE_PREFIX)/${@}-build:latest -f Containerfile --build-arg EXTRA_PACKAGES="rocm-devel" .
+rocm: vulkan
+	podman build -t $(IMAGE_PREFIX)/${@}-build:latest -f Containerfile.rocm .
 	toolbox create --image $(IMAGE_PREFIX)/${@}-build ${@}-build
 
-rocm-nightly:
+rocm-nightly:	vulkan
 	toolbox create --image $(IMAGE_PREFIX)/${<}-build ${@}-build
-	toolbox run --container ${@}-build rocm-nightly install amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel
+	toolbox run --container ${@}-build ${HOME}/bin/rocm-nightly install amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel
+
+update-rocm-nightly:
+	toolbox run --container ${@}-build ${HOME}/bin/rocm-nightly update amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel

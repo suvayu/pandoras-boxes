@@ -1,0 +1,4 @@
+FROM localhost/vulkan-build:latest
+
+RUN dnf -y install rocm-devel && \
+    dnf clean all

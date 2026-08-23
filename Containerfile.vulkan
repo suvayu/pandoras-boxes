@@ -1,7 +1,5 @@
 FROM fedora:latest
 
-ARG EXTRA_PACKAGES=""
-
 RUN dnf -y update && \
     dnf -y install \
         coreutils \
@@ -19,6 +17,5 @@ RUN dnf -y update && \
         vulkan-headers \
         vulkan-loader-devel \
         spirv-headers-devel \
-        glslc \
-        $EXTRA_PACKAGES && \
+        glslc && \
     dnf clean all
