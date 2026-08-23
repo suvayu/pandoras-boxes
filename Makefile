@@ -11,7 +11,7 @@ define TOOLBOX_CREATE
 	podman container exists $(1)-build || toolbox create --image $(IMAGE_PREFIX)/$(2)-build $(1)-build
 endef
 
-.PHONY: all vulkan rocm rocm-nightly
+.PHONY: all vulkan rocm rocm-nightly update-rocm-nightly
 
 all: vulkan rocm rocm-nightly
 
