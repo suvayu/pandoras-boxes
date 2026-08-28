@@ -35,4 +35,4 @@ rocm-nightly:	vulkan
 	$(call TOOLBOX_RUN,$@,${HOME}/bin/rocm-nightly -y install $(ROCM_PACKAGES))
 
 update-rocm-nightly:
-	$(call TOOLBOX_RUN,$@,${HOME}/bin/rocm-nightly -y update $(ROCM_PACKAGES))
+	$(call TOOLBOX_RUN,rocm-nightly,${HOME}/bin/rocm-nightly -y upgrade $(ROCM_PACKAGES))

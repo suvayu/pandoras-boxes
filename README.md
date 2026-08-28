@@ -21,5 +21,9 @@ Fedora-based container toolboxes for self-hosting LLMs on AMD & Intel hardware.
 
 - Build a specific toolbox
   ```bash
-  make vulkan rocm rocm-nightly
+  make <vulkan|rocm|rocm-nightly>
+  ```
+- Update ROCm nightly:
+  ```bash
+  make update-rocm-nightly
   ```
