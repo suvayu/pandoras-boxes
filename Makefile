@@ -26,7 +26,7 @@ vulkan:
 	$(call PODMAN_BUILD,$@)
 	$(call TOOLBOX_CREATE,$@,$@)
 
-rocm: vulkan
+rocm openvino:%:	vulkan
 	$(call PODMAN_BUILD,$@)
 	$(call TOOLBOX_CREATE,$@,$@)
 
@@ -36,6 +36,3 @@ rocm-nightly:	vulkan
 
 update-rocm-nightly:
 	$(call TOOLBOX_RUN,rocm-nightly,${HOME}/bin/rocm-nightly -y upgrade $(ROCM_PACKAGES))
-
-openvino:	vulkan
-	$(call TOOLBOX_CREATE,$@,$<)

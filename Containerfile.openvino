@@ -1,0 +1,10 @@
+FROM localhost/build-vulkan:latest
+
+COPY ./oneAPI.repo /etc/yum.repos.d/
+
+RUN dnf -y install \
+        clinfo \
+        intel-opencl \
+        ocl-icd{,-devel} \
+        opencl-headers && \
+    dnf clean all
