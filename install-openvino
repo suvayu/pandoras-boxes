@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -euo pipefail
+
+readonly BASE_URL="https://storage.openvinotoolkit.org/repositories/openvino/packages/"
+readonly FILETREE="https://storage.openvinotoolkit.org/filetree.json"
+
+declare FILETREE_JSON LATEST_VERSION URL
+
+FILETREE_JSON="$(mktemp)"
+trap 'rm -f "${FILETREE_JSON}"' EXIT INT
+
+curl -fsSL "${FILETREE}" -o "${FILETREE_JSON}"
+
+readonly __version_query='
+  .children[] | select(.name == "repositories")
+| .children[] | select(.name == "openvino")
+| .children[] | select(.name == "packages")
+| .children[] | .name | select(test("^[0-9]{4}\\.[0-9]+\\.[0-9]+$"))
+'
+
+LATEST_VERSION=${
+    jq -r "${__version_query}" "${FILETREE_JSON}" \
+       | sort -t. -k1,1n -k2,2n -k3,3n \
+       | tail -n 1
+}
+
+readonly __url_query='
+  .children[] | select(.name == "repositories")
+| .children[] | select(.name == "openvino")
+| .children[] | select(.name == "packages")
+| .children[] | select(.name == $version)
+| .children[] | select(.name == "linux")
+| .children[] | select(
+  .type == "file" and
+  (.name | test("openvino_toolkit_rhel9_" + $version + ".*x86_64\\.tgz$")))
+| "\($base)\($version)/linux/\(.name)"
+'
+
+URL=${ jq -r --arg base "${BASE_URL}" --arg version "${LATEST_VERSION}" \
+       "${__url_query}" "${FILETREE_JSON}"
+}
+
+declare TARBALL=openvino_${LATEST_VERSION}.tgz
+
+mkdir -p $HOME/intel dist
+[[ ! -f dist/$TARBALL ]] || curl -s -L "${URL}" --output dist/$TARBALL
+[[ ! -d $HOME/intel/${TARBALL%.tgz} ]] || {
+    tar xf dist/$TARBALL
+    mv openvino_toolkit_* $HOME/intel/${TARBALL%.tgz}
+}
