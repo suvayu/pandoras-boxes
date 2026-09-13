@@ -1,8 +1,11 @@
 #!/bin/bash
 
-declare baseurl=https://rocm.nightlies.amd.com/packages-multi-arch/rpm/ nightly_ver
+# see: https://github.com/ROCm/TheRock/blob/main/RELEASES.md#installing-multi-arch-native-linux-packages
+
+declare baseurl=https://nightly.repo.amd.com/rocm/core/packages/rpm/ nightly_ver
 nightly_ver=${
     curl -s $baseurl | sed -En -e 's/.*href="([^"]+)".*/\1/;s%index\.html%%p' | tail -1;
 }
 
-sudo dnf --repofrompath=rocm-nightly,"${baseurl}${nightly_ver}\$basearch" --setopt=rocm-nightly.gpgcheck=0 "${@}"
+sudo dnf --repofrompath=rocm-nightly,"${baseurl}${nightly_ver}\$basearch" \
+     --setopt=rocm-nightly.gpgcheck=0 --setopt=rocm-nightly.priority=50 "${@}"
