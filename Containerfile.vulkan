@@ -7,15 +7,23 @@ RUN dnf -y update && \
         git \
         less \
         which \
+	sqlite \
         sudo \
         cmake \
         ninja-build \
         gcc \
         gcc-c++ \
+	clang \
+	clang-devel \
+	compiler-rt \
+	lld \
         npm \
+	libcurl-devel \
         openssl-devel \
+	rdma-core-devel \
         vulkan-headers \
         vulkan-loader-devel \
+	mesa-vulkan-drivers \
         spirv-headers-devel \
         glslc && \
     dnf clean all
