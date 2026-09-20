@@ -8,7 +8,6 @@ fi
 declare CONTAINER="$1"
 declare BACKEND=${2:-${CONTAINER#build-}}
 
-# the 'EOF' quoting prevents the outer shell from expanding the heredoc contents
 toolbox run -c "$CONTAINER" bash -i ${0}.${BACKEND}
 
 BUILD_STATUS=$?
