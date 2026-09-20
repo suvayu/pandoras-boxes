@@ -44,8 +44,8 @@ URL=${ jq -r --arg base "${BASE_URL}" --arg version "${LATEST_VERSION}" \
 declare TARBALL=openvino_${LATEST_VERSION}.tgz
 
 mkdir -p $HOME/intel dist
-[[ ! -f dist/$TARBALL ]] || curl -s -L "${URL}" --output dist/$TARBALL
-[[ ! -d $HOME/intel/${TARBALL%.tgz} ]] || {
+[[ ! -f dist/$TARBALL ]] && curl -s -L "${URL}" --output dist/$TARBALL
+[[ ! -d $HOME/intel/${TARBALL%.tgz} ]] && {
     tar xf dist/$TARBALL
     mv openvino_toolkit_* $HOME/intel/${TARBALL%.tgz}
 }
