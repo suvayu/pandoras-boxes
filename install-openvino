@@ -33,7 +33,7 @@ readonly __url_query='
 | .children[] | select(.name == "linux")
 | .children[] | select(
   .type == "file" and
-  (.name | test("openvino_toolkit_rhel9_" + $version + ".*x86_64\\.tgz$")))
+  (.name | test("openvino_toolkit_ubuntu26_" + $version + ".*x86_64\\.tgz$")))
 | "\($base)\($version)/linux/\(.name)"
 '
 
