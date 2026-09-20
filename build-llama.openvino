@@ -3,6 +3,7 @@
 [[ ! -d /opt/intel ]] && source $HOME/intel/openvino_2026.3.1/setupvars.sh
 [[ ! -d $HOME/intel ]] && source $HOME/intel/openvino_2026.3.1/setupvars.sh
 
-cmake -S . -B build -DGGML_VULKAN=1 -DGGML_OPENVINO=ON \
-      -DBUILD_SHARED_LIBS=1 -DGGML_BACKEND_DL=1 -DGGML_CPU_ALL_VARIANTS=1
+cmake -S . -B build -DGGML_VULKAN=1 -DGGML_OPENVINO=ON -DGGML_RPC=ON \
+      -DBUILD_SHARED_LIBS=1 -DGGML_BACKEND_DL=1 -DGGML_CPU_ALL_VARIANTS=1 \
+      -DLLAMA_BUILD_UI=OFF -DLLAMA_USE_PREBUILT_UI=OFF
 cmake --build build
