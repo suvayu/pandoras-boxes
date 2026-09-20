@@ -50,4 +50,7 @@ mkdir -p $HOME/intel dist
 [[ ! -d $HOME/intel/${TARBALL%.tgz} ]] && {
     tar xf dist/$TARBALL
     mv openvino_toolkit_* $HOME/intel/${TARBALL%.tgz}
+    declare metadist=$HOME/intel/openvino_${ date +%Y; }
+    rm "$metadist"
+    ln -fs -T ${TARBALL%.tgz} "$metadist"
 }
