@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# set -o xtrace
+
 set -euo pipefail
 
 readonly BASE_URL="https://storage.openvinotoolkit.org/repositories/openvino/packages/"
