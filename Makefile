@@ -1,5 +1,4 @@
-IMAGE_PREFIX ?= localhost
-PROJECT_NAME ?= myname
+IMAGE_PREFIX  ?= localhost
 ROCM_PACKAGES := amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel
 
 # common container options
