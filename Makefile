@@ -35,7 +35,7 @@ vulkan:
 	$(call PODMAN_BUILD,$@)
 	$(call TOOLBOX_CREATE,$@,$@,$($@_opts))
 
-rocm openvino:%:	vulkan
+rocm openvino oneapi:%:	vulkan
 	$(call PODMAN_BUILD,$@)
 	$(call TOOLBOX_CREATE,$@,$@,$($@_opts))
 

@@ -1,0 +1,13 @@
+FROM localhost/build-vulkan:latest
+
+COPY ./oneAPI.repo /etc/yum.repos.d/
+
+RUN dnf -y install \
+        intel-deep-learning-essentials \
+        intel-gpu-firmware \
+        intel-level-zero \
+        intel-oneapi-toolkit \
+	xpu-smi && \
+    dnf clean all
+
+RUN ln -s /opt/intel/oneapi/setvars.sh /etc/profile.d/
