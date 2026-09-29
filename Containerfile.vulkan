@@ -5,6 +5,7 @@ RUN dnf -y update && \
         coreutils \
         findutils \
         git \
+	jq \
         less \
         which \
 	procps-ng \
@@ -21,6 +22,10 @@ RUN dnf -y update && \
 	lld \
         npm \
 	libcurl-devel \
+	libicu-devel \
+	libjpeg-turbo-devel \
+	libpng-devel \
+	libwebp-devel \
         openssl-devel \
 	rdma-core-devel \
         vulkan-headers \
