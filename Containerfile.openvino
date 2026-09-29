@@ -4,6 +4,7 @@ COPY ./oneAPI.repo /etc/yum.repos.d/
 
 RUN dnf -y install \
         clinfo \
+        intel-gpu-firmware \
         intel-opencl \
         ocl-icd{,-devel} \
         opencl-headers && \
