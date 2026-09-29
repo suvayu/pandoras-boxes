@@ -1,7 +1,10 @@
 #!/bin/bash
 
-[[ -d /opt/intel ]] && source /opt/intel/openvino_2026/setupvars.sh
-[[ -d $HOME/intel ]] && source $HOME/intel/openvino_2026/setupvars.sh
+declare yr
+yr=${ date +%Y; }
+
+[[ -d /opt/intel ]] && source "/opt/intel/openvino_genai_$yr/setupvars.sh"
+[[ -d $HOME/intel ]] && source "$HOME/intel/openvino_genai_$yr/setupvars.sh"
 
 cmake -S . -B build \
       -DGGML_OPENVINO=ON \
