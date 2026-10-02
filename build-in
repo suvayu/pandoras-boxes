@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 <toolbox-container-name> <recipe>" >&2
+    exit 1
+fi
+
+declare CONTAINER="$1" RECIPE="$2" BACKEND
+
+BACKEND=${CONTAINER#build-}
+BACKEND=${BACKEND%-nightly}
+
+toolbox run -c "$CONTAINER" bash -i "${RECIPE}.${BACKEND}"
+
+exit $?
