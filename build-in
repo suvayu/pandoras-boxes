@@ -10,6 +10,6 @@ declare CONTAINER="$1" RECIPE="$2" BACKEND
 BACKEND=${CONTAINER#build-}
 BACKEND=${BACKEND%-nightly}
 
-toolbox run -c "$CONTAINER" bash -i "${RECIPE}.${BACKEND}"
+toolbox run -c "$CONTAINER" bash -i "${0%/*}/${RECIPE}.${BACKEND}"
 
 exit $?
