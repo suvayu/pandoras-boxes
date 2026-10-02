@@ -10,10 +10,4 @@ declare BACKEND=${2:-${CONTAINER#build-}}
 
 toolbox run -c "$CONTAINER" bash -i ${0}.${BACKEND}
 
-BUILD_STATUS=$?
-
-if [ "$BUILD_STATUS" -eq 0 ]; then
-    podman stop "$CONTAINER"
-fi
-
-exit "$BUILD_STATUS"
+exit $?
