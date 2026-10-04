@@ -6,6 +6,13 @@ dev  := --device /dev/dri
 grps := --group-add video --group-add render --group-add sudo
 sec  := --security-opt seccomp=unconfined
 
+# GH token for lemonade-server
+gh_tok := $(shell gh auth token 2>/dev/null || true)
+ifeq ($(gh_tok),)
+	$(error "gh: not authenticated, please login")
+endif
+secmnt := --secret id=GITHUB_TOKEN,env=GITHUB_TOKEN
+
 # backend specific options
 vulkan_opts   := $(dev) $(grps) $(sec)
 rocm_opts     := $(dev) --device /dev/kfd $(grps) $(sec)
@@ -13,7 +20,7 @@ openvino_opts := $(dev) $(grps) $(sec) --env=GGML_OPENVINO_DEVICE=GPU --env=GGML
 
 # $(1) = image base name
 define PODMAN_BUILD
-	podman build -t $(IMAGE_PREFIX)/build-$(1):latest -f Containerfile.$(1) .
+	GITHUB_TOKEN=$(gh_tok) podman build $(secmnt) -t $(IMAGE_PREFIX)/build-$(1):latest -f Containerfile.$(1) .
 endef
 
 # $(1) = container base name, $(2) = image base name, $(3) = options

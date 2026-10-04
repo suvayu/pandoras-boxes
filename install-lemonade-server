@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Install the latest lemonade-server RPM from GitHub via GraphQL + dnf.
+# For Containerfiles on a Fedora base image; needs curl, jq, dnf.
+# Auth: GITHUB_TOKEN must be set (GraphQL API requires it), e.g.:
+#   RUN --mount=type=secret,id=GITHUB_TOKEN \
+#       GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN) ./install-lemonade-server
+set -euo pipefail
+
+: "${GITHUB_TOKEN:?required - GitHub GraphQL API needs auth}"
+
+. /etc/os-release   # Fedora base: gives VERSION_ID
+pattern="lemonade-server-.*fc${VERSION_ID}\.$(uname -m)\.rpm$"
+
+read -r -d '' query <<'EOF' || true
+query ($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    latestRelease {
+      tagName
+      releaseAssets(first: 50) {
+        nodes { name downloadUrl }
+      }
+    }
+  }
+}
+EOF
+
+response=$(curl -sf https://api.github.com/graphql \
+  -H "Authorization: bearer $GITHUB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "$(jq -n --arg q "$query" \
+        '{query: $q, variables: {owner: "lemonade-sdk", name: "lemonade"}}')")
+
+# GraphQL reports errors as HTTP 200 with an "errors" field.
+if [[ $(jq 'has("errors")' <<<"$response") == true ]]; then
+  jq -r '.errors[].message' <<<"$response" >&2
+  exit 1
+fi
+
+release=$(jq -r '.data.repository.latestRelease.tagName' <<<"$response")
+url=$(jq -r --arg p "$pattern" \
+  '.data.repository.latestRelease.releaseAssets.nodes[]
+   | select(.name | test($p)) | .downloadUrl' <<<"$response")
+
+[[ -n $url ]] || { echo "error: no asset in $release matches /$pattern/" >&2; exit 1; }
+
+echo "installing lemonade-server $release"
+dnf install -y "$url"
+dnf clean all

@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Download the latest lemonade-server release asset from GitHub via GraphQL.
+# Usage: get-lemonade-server [asset-name-regex]
+# Auth: GITHUB_TOKEN, else `gh auth token` (GraphQL API requires auth).
+set -euo pipefail
+
+owner=lemonade-sdk
+repo=lemonade
+
+# Asset matcher: argument, else guess from this machine's distro.
+if (($#)); then
+  pattern=$1
+else
+  ID=unknown; [[ -r /etc/os-release ]] && . /etc/os-release
+  case $ID in
+    fedora)        pattern="lemonade-server-.*fc${VERSION_ID}\.$(uname -m)\.rpm$" ;;
+    debian|ubuntu) pattern="lemonade-server_.*debian13_$(dpkg --print-architecture 2>/dev/null || echo amd64)\.deb$" ;;
+    *)             pattern="lemonade-server" ;;
+  esac
+fi
+
+token=${GITHUB_TOKEN:-$(gh auth token 2>/dev/null || true)}
+[[ -n $token ]] || { echo "error: set GITHUB_TOKEN (GraphQL API requires auth)" >&2; exit 1; }
+
+read -r -d '' query <<'EOF' || true
+query ($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    latestRelease {
+      tagName
+      releaseAssets(first: 50) {
+        nodes { name downloadUrl }
+      }
+    }
+  }
+}
+EOF
+
+response=$(curl -sf https://api.github.com/graphql \
+  -H "Authorization: bearer $token" \
+  -H "Content-Type: application/json" \
+  -d "$(jq -n --arg q "$query" --arg o "$owner" --arg n "$repo" \
+        '{query: $q, variables: {owner: $o, name: $n}}')")
+
+# GraphQL reports errors as HTTP 200 with an "errors" field.
+if [[ $(jq 'has("errors")' <<<"$response") == true ]]; then
+  jq -r '.errors[].message' <<<"$response" >&2
+  exit 1
+fi
+
+release=$(jq -r '.data.repository.latestRelease.tagName' <<<"$response")
+mapfile -t assets < <(jq -r --arg p "$pattern" \
+  '.data.repository.latestRelease.releaseAssets.nodes[]
+   | select(.name | test($p)) | [.name, .downloadUrl] | @tsv' <<<"$response")
+
+((${#assets[@]})) || { echo "error: no asset in $release matches /$pattern/" >&2; exit 1; }
+
+for line in "${assets[@]}"; do
+  name=${line%%$'\t'*}
+  url=${line#*$'\t'}
+  echo "downloading $name ($release)"
+  curl -fLO "$url"
+done

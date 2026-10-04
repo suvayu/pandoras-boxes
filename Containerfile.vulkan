@@ -34,3 +34,8 @@ RUN dnf -y update && \
         spirv-headers-devel \
         glslc && \
     dnf clean all
+
+COPY install-lemonade-server /usr/local/bin/
+
+RUN --mount=type=secret,id=GITHUB_TOKEN \
+    GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN) /usr/local/bin/install-lemonade-server
