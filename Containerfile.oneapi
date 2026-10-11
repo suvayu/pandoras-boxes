@@ -7,6 +7,12 @@ RUN dnf -y install \
         intel-gpu-firmware \
         intel-level-zero \
         intel-oneapi-toolkit \
+        intel-oneapi-dpcpp-ct \
+        intel-ocloc-devel \
+        python3-jinja2 \
+        python3-numpy \
+        python3-psutil \
+        python3-regex \
 	xpu-smi && \
     dnf clean all
 

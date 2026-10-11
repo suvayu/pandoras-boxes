@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# bash profile in the image sources it
+# source /opt/intel/oneapi/setvars.sh
+
+declare ONEAPI_DEVICE_SELECTOR SYCL_CACHE_PERSISTENT ZES_ENABLE_SYSMAN AOT
+export ONEAPI_DEVICE_SELECTOR=level_zero:0 SYCL_CACHE_PERSISTENT=0 ZES_ENABLE_SYSMAN=1 AOT=bmg-g31
+
+# bash ./sycl/tools/build.sh strata
+cmake -S sycl -B build-sycl \
+      -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icpx \
+      -DSTRATA_SYCL_AOT=${AOT} -DSTRATA_SYCL_SPIN_MAX="${SPIN_MAX}"
+cmake --build build-sycl --target strata -- -k 0
