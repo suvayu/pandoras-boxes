@@ -1,5 +1,6 @@
-IMAGE_PREFIX  ?= localhost
-ROCM_PACKAGES := amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel
+IMAGE_PREFIX	?= localhost
+RUNTIMES	:= vulkan rocm oneapi openvino
+ROCM_PACKAGES	:= amdrocm{,-core-sdk}????-gfx1151 rocwmma-devel
 
 # common container options
 dev  := --device /dev/dri
@@ -8,8 +9,8 @@ sec  := --security-opt seccomp=unconfined
 
 # GH token for lemonade-server
 gh_tok := $(shell gh auth token 2>/dev/null || true)
-ifeq ($(gh_tok),)
-	$(error "gh: not authenticated, please login")
+ifeq ($(gh_tok)$(filter help,$(MAKECMDGOALS)),)
+  $(error "gh: not authenticated, please login")
 endif
 secmnt := --secret id=GITHUB_TOKEN,env=GITHUB_TOKEN
 
@@ -34,15 +35,18 @@ define TOOLBOX_RUN
 	podman stop build-$(1)
 endef
 
-.PHONY: all vulkan rocm rocm-nightly update-rocm-nightly
+# formatting
+GREEN	:= \e[32m
+BOLD	:= \e[1m
+CLEAR	:= \e[0;0m
 
-all: vulkan rocm rocm-nightly
+.PHONY: all $(RUNTIMES) rocm-nightly update-rocm-nightly help
 
 vulkan:
 	$(call PODMAN_BUILD,$@)
 	$(call TOOLBOX_CREATE,$@,$@,$($@_opts))
 
-rocm openvino oneapi:%:	vulkan
+rocm oneapi openvino:%:	vulkan
 	$(call PODMAN_BUILD,$@)
 	$(call TOOLBOX_CREATE,$@,$@,$($@_opts))
 
@@ -52,3 +56,9 @@ rocm-nightly:	vulkan
 
 update-rocm-nightly:
 	$(call TOOLBOX_RUN,rocm-nightly,./rocm-nightly -y upgrade $(ROCM_PACKAGES))
+
+help:
+	@printf '$(GREEN)$(BOLD)%s$(CLEAR)|' $(RUNTIMES) | sed -e 's/|$$//'; \
+		echo -e '\tBuild toolbox for <given> runtime'
+	@echo -e '$(GREEN)$(BOLD)rocm-nightly$(CLEAR)\t\t\tBuild ROCm toolbox from nightly release of TheRock'
+	@echo -e '$(GREEN)$(BOLD)help$(CLEAR)\t\t\t\tPrint this help message'
