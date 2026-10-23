@@ -10,18 +10,20 @@ Fedora-based container toolboxes for self-hosting LLMs on AMD & Intel hardware.
 
 ## Runtimes
 
-| Runtime   | Vulkan        | ROCm    | OpenVino | Notes                             |
-|-----------|---------------|---------|----------|-----------------------------------|
-| llama.cpp | Secondary     | Primary | -        | Best Vulkan support via ggml      |
-| DS4       | When possible | Primary | -        | GPU backend dependent             |
-| vLLM      | N/A           | Primary | -        | ROCm-only for AMD; no Vulkan path |
+| Runtime   | Vulkan        | ROCm    | oneAPI  | Notes                                         |
+|-----------|---------------|---------|---------|-----------------------------------------------|
+| llama.cpp | secondary     | primary | primary | Best Vulkan support via ggml                  |
+| DS4       | when possible | primary | -       | GPU backend dependent                         |
+| Gufo      | -             | primary | -       |                                               |
+| Strata    | -             | maybe   | primary | Prefer for small VRAM; needs large system RAM |
+| ~vLLM~    | n/a           | primary | -       | ROCm-only for AMD; no Vulkan path             |
 
 
 ## Quick start
 
 - Build a specific toolbox
   ```bash
-  make <vulkan|rocm|rocm-nightly>
+  make <runtime>
   ```
 - Update ROCm nightly:
   ```bash
