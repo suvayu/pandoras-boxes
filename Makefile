@@ -21,7 +21,7 @@ openvino_opts := $(dev) $(grps) $(sec) --env=GGML_OPENVINO_DEVICE=GPU --env=GGML
 
 # $(1) = image base name
 define PODMAN_BUILD
-	GITHUB_TOKEN=$(gh_tok) podman build $(secmnt) -t $(IMAGE_PREFIX)/build-$(1):latest -f Containerfile.$(1) .
+	GITHUB_TOKEN=$(gh_tok) podman build --pull=newer $(secmnt) -t $(IMAGE_PREFIX)/build-$(1):latest -f Containerfile.$(1) .
 endef
 
 # $(1) = container base name, $(2) = image base name, $(3) = options
