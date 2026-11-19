@@ -1,0 +1,11 @@
+#!/bin/bash
+
+declare HIPCXX # HIP_PATH
+HIPCXX="$(hipconfig -l)/clang++" # HIP_PATH="$(hipconfig -R)"
+cmake -S engine -B build-halo -DCMAKE_BUILD_TYPE=Release \
+      -DSTRATA_ENABLE_HIP=ON -DSTRATA_ENABLE_CUDA=OFF \
+      -DCMAKE_HIP_ARCHITECTURES=gfx1151 \
+      -DCMAKE_HIP_COMPILER=$HIPCXX \
+      # -DCMAKE_HIP_COMPILER_ROCM_ROOT=$HIP_PATH
+      # --rocm-device-lib-path=$SDK/lib/llvm/amdgcn/bitcode
+cmake --build build-halo --target strata
