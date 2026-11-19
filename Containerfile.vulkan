@@ -6,6 +6,7 @@ RUN dnf -y update && \
         findutils \
         git \
 	jq \
+	kitty-terminfo \
         less \
         which \
 	procps-ng \
