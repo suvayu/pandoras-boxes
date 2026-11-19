@@ -26,6 +26,7 @@ RUN dnf -y update && \
 	libicu-devel \
 	libjpeg-turbo-devel \
 	libpng-devel \
+	libsndfile-devel \
 	libwebp-devel \
         openssl-devel \
 	rdma-core-devel \
@@ -33,7 +34,12 @@ RUN dnf -y update && \
         vulkan-loader-devel \
 	mesa-vulkan-drivers \
         spirv-headers-devel \
-        glslc && \
+        glslc \
+        python3-jinja2 \
+        python3-numpy \
+        python3-pillow \
+        python3-psutil \
+        python3-regex && \
     dnf clean all
 
 COPY install-lemonade-server /usr/local/bin/
